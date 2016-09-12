@@ -49,13 +49,42 @@ namespace Donjon
                         break;
                 }
 
+                // Fight
+                var cell = map.Cells[player.X, player.Y];
+                if (cell.Monster != null) {
+                    player.Fight(cell.Monster);
+                    if (cell.Monster.Health <= 0) {
+                        cell.Monster = null;
+                    }
+                }
+
                 // print map & other info
-                Console.SetCursorPosition(0, 0);
+                //Console.SetCursorPosition(0, 0);
+                Console.Clear();
                 PrintMap();
+                PrintStats();
 
             } while (!quit && player.Health > 0);
 
             // game over
+            Console.WriteLine("Game Over");
+            Console.ReadKey();
+        }
+
+        private void PrintStats()
+        {
+            Console.WriteLine("HP: " + player.Health);
+            Console.WriteLine($"X: {player.X}, Y: {player.Y}");
+
+            Console.WriteLine("In this room you see:");
+            var cell = map.Cells[player.X, player.Y];
+            if (cell.Monster == null)
+            {
+                Console.WriteLine("  nothing");
+            }
+            else {
+                Console.WriteLine($"  {cell.Monster.Name} ({cell.Monster.Health} hp)");
+            }
         }
 
         private void PopulateMap()
@@ -93,7 +122,7 @@ namespace Donjon
                     }
                     else if (cell.Monster != null)
                     {
-                        Console.Write(cell.Monster.MapSymbol);  // polymorfism, regel 2
+                        Console.Write(cell.Monster.MapSymbol);  // polymorfism, regel 2, typ
                     }
                     else {
                         Console.Write(".");
