@@ -19,56 +19,83 @@ namespace Donjon
             PopulateMap();
 
             PrintMap();
+            PrintStats();
             bool quit = false;
             do
             {
-                // get input from player
-                Console.WriteLine("Press a key, Q to quit");
-                var keyInfo = Console.ReadKey(true);
-                var key = keyInfo.Key;
-
-                // process input
-                switch (key)
-                {
-                    case ConsoleKey.Q:
-                        quit = true;
-                        break;
-                    case ConsoleKey.UpArrow:
-                        if (player.Y > 0) player.Y--;
-                        break;
-                    case ConsoleKey.DownArrow:
-                        if (player.Y < map.Height - 1) player.Y++;
-                        break;
-                    case ConsoleKey.LeftArrow:
-                        if (player.X > 0) player.X--;
-                        break;
-                    case ConsoleKey.RightArrow:
-                        if (player.X < map.Width - 1) player.X++;
-                        break;
-                    default:
-                        break;
-                }
-
-                // Fight
-                var cell = map.Cells[player.X, player.Y];
-                if (cell.Monster != null) {
-                    player.Fight(cell.Monster);
-                    if (cell.Monster.Health <= 0) {
-                        cell.Monster = null;
-                    }
-                }
+                // get input from player and process it
+                ConsoleKey key = GetKey();
+                quit = Process(quit, key);
 
                 // print map & other info
-                //Console.SetCursorPosition(0, 0);
                 Console.Clear();
                 PrintMap();
                 PrintStats();
+
+                var cell = map.Cells[player.X, player.Y];                
+                if (cell.Monster?.Health <= 0)
+                {
+                    cell.Monster = null;
+                }
+
 
             } while (!quit && player.Health > 0);
 
             // game over
             Console.WriteLine("Game Over");
             Console.ReadKey();
+        }
+
+        private bool Process(bool quit, ConsoleKey key)
+        {
+            switch (key)
+            {
+                case ConsoleKey.Q:
+                    quit = true;
+                    break;
+                case ConsoleKey.UpArrow:
+                    if (player.Y > 0) player.Y--;
+                    break;
+                case ConsoleKey.DownArrow:
+                    if (player.Y < map.Height - 1) player.Y++;
+                    break;
+                case ConsoleKey.LeftArrow:
+                    if (player.X > 0) player.X--;
+                    break;
+                case ConsoleKey.RightArrow:
+                    if (player.X < map.Width - 1) player.X++;
+                    break;
+                case ConsoleKey.F:
+                    Fight();
+                    break;
+                default:
+                    break;
+            }
+
+            return quit;
+        }
+
+        private void Fight()
+        {
+            var cell = map.Cells[player.X, player.Y];
+            if (cell.Monster != null)
+            {
+                Console.WriteLine("You attack the " + cell.Monster.Name);
+                player.Fight(cell.Monster);
+                if (cell.Monster.Health <= 0)
+                {
+                    Console.WriteLine("You defeated the " + cell.Monster.Name);
+                }
+            }
+        }
+
+        private static ConsoleKey GetKey()
+        {
+            Console.WriteLine();
+            Console.WriteLine("Press a key, Q to quit");
+            var keyInfo = Console.ReadKey(true);
+            var key = keyInfo.Key;
+            return key;
         }
 
         private void PrintStats()
@@ -82,8 +109,12 @@ namespace Donjon
             {
                 Console.WriteLine("  nothing");
             }
-            else {
+            else if (cell.Monster.Health > 0)
+            {
                 Console.WriteLine($"  {cell.Monster.Name} ({cell.Monster.Health} hp)");
+            }
+            else {
+                Console.WriteLine("  A dead " + cell.Monster.Name);
             }
         }
 
