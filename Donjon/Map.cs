@@ -8,15 +8,22 @@ namespace Donjon
 {
     class Map
     {
-        Cell[,] cells;
+        public int Width { get; }
+        public int Height { get; }
+
+        public readonly Cell[,] Cells;
+
         public Map(int width, int height)
         {
-            cells = new Cell[width, height];
+            Width = width;
+            Height = height;
+
+            Cells = new Cell[width, height];
             for (int x = 0; x < width; x++)
             {
                 for (int y = 0; y < height; y++)
                 {
-                    cells[x, y] = new Cell();
+                    Cells[x, y] = new Cell();
                 }
             }
         }

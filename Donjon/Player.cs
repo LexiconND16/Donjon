@@ -15,10 +15,12 @@ namespace Donjon
             set { health = value; }
         }
 
+        public int X { get; set; }
+        public int Y { get; set; }
+
         public Player(int health)
         {
             this.health = health;
         }
     }
 }
-'

@@ -8,5 +8,6 @@ namespace Donjon
 {
     class Cell
     {
+        public Monster Monster { get; set; }
     }
 }
