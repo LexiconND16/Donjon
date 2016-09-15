@@ -24,9 +24,11 @@ namespace Donjon
             get { return HasSword ? 30 : 10; }
         }
 
+        public LimitedList<Item> Backpack { get; } = new LimitedList<Item>(2);
+
         public Player(int health)
         {
-            this.health = health;
+            this.health = health;            
         }
 
         public void Fight(Monster monster)
@@ -36,18 +38,12 @@ namespace Donjon
 
         public bool PickUp(Item item)
         {
-            if (item is Sword)
+            if (item is Sword && !HasSword)
             {
-                if (!HasSword)
-                {
-                    HasSword = true;
-                    return true;
-                }
-                else {
-                    return false;
-                }
+                HasSword = true;
+                return true;
             }
-            return false;
+            return Backpack.Add(item);
         }
     }
 }

@@ -20,6 +20,19 @@ namespace Donjon
 
     class Sword : Item
     {
-        public Sword() : base("S", "sword") { }
+        public Sword() : base("s", "sword") { }
+    }
+
+    class Gem : Item
+    {
+        public Gem() : base("g", "gem") { }
+    }
+    class Nugget : Item
+    {
+        public Nugget() : base("n", "gold nugget") { }
+    }
+    class Sock : Item
+    {
+        public Sock() : base("d", "old dirty sock") { }
     }
 }

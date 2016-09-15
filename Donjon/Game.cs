@@ -44,7 +44,7 @@ namespace Donjon
 
             // game over
             Console.WriteLine("Game Over");
-            Console.ReadKey();
+            Console.ReadKey(true);
         }
 
         private bool Process(bool quit, ConsoleKey key)
@@ -151,6 +151,12 @@ namespace Donjon
             else {
                 Console.WriteLine("  A " + cell.Item.Name);
             }
+            Console.WriteLine("Your backpack contains:");
+            foreach (var item in player.Backpack)
+            {
+                Console.WriteLine("  " + item.Name);
+            }
+            if (player.Backpack.Count == 0) Console.WriteLine("  nothing");
         }
 
         private void PopulateMap()
@@ -180,9 +186,24 @@ namespace Donjon
                 else if (chance < 30)
                 {
                     // item
-                    if (random.Next(2) == 0)
+                    var whichItem = random.Next(7);
+                    switch (whichItem)
                     {
-                        cell.Item = new Sword();
+                        case 0:
+                            cell.Item = new Sword();
+                            break;
+                        case 1:
+                            cell.Item = new Gem();
+                            break;
+                        case 2:
+                        case 3:
+                            cell.Item = new Nugget();
+                            break;
+                        case 4:
+                        case 5:
+                        case 6:
+                            cell.Item = new Sock();
+                            break;
                     }
                 }
             }
