@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 
 namespace Donjon
 {
@@ -68,11 +69,33 @@ namespace Donjon
                 case ConsoleKey.F:
                     Fight();
                     break;
+                case ConsoleKey.P:
+                    PickUp();
+                    break;
                 default:
                     break;
             }
 
             return quit;
+        }
+
+        private void PickUp()
+        {
+            var cell = map.Cells[player.X, player.Y];
+            if (cell.Item != null)
+            {
+                var pickedUp = player.PickUp(cell.Item);
+                if (pickedUp)
+                {
+                    Console.WriteLine("You pick up the " + cell.Item.Name);
+                    cell.Item = null;
+                }
+                else
+                {
+                    Console.WriteLine("You didn't pick up the " + cell.Item.Name);
+                }
+            }
+            Thread.Sleep(3000);
         }
 
         private void Fight()
@@ -91,7 +114,7 @@ namespace Donjon
                     cell.Monster.Fight(player);
                 }
             }
-            System.Threading.Thread.Sleep(3000);
+            Thread.Sleep(3000);
         }
 
         private static ConsoleKey GetKey()
@@ -106,13 +129,13 @@ namespace Donjon
         private void PrintStats()
         {
             Console.WriteLine("HP: " + player.Health);
-            Console.WriteLine($"X: {player.X}, Y: {player.Y}");
+            Console.WriteLine("Weapon: " + (player.HasSword ? "sword" : "no"));
 
             Console.WriteLine("In this room you see:");
             var cell = map.Cells[player.X, player.Y];
             if (cell.Monster == null)
             {
-                Console.WriteLine("  nothing");
+                Console.WriteLine("  no monster");
             }
             else if (cell.Monster.Health > 0)
             {
@@ -120,6 +143,13 @@ namespace Donjon
             }
             else {
                 Console.WriteLine("  A dead " + cell.Monster.Name);
+            }
+            if (cell.Item == null)
+            {
+                Console.WriteLine("  no item");
+            }
+            else {
+                Console.WriteLine("  A " + cell.Item.Name);
             }
         }
 
@@ -145,12 +175,13 @@ namespace Donjon
                         case 2:
                             cell.Monster = new Troll();
                             break;
-                    }                  
+                    }
                 }
                 else if (chance < 30)
                 {
                     // item
-                    if (random.Next(2) == 0) {
+                    if (random.Next(2) == 0)
+                    {
                         cell.Item = new Sword();
                     }
                 }
@@ -175,11 +206,11 @@ namespace Donjon
                     }
                     else if (cell.Monster != null)
                     {
-                        Console.Write(cell.Monster.MapSymbol); 
+                        Console.Write(cell.Monster.MapSymbol);
                     }
                     else if (cell.Item != null)
                     {
-                        Console.Write(cell.Item.MapSymbol); 
+                        Console.Write(cell.Item.MapSymbol);
                     }
                     else {
                         Console.Write(".");
