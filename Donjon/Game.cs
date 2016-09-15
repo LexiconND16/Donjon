@@ -32,7 +32,7 @@ namespace Donjon
                 PrintMap();
                 PrintStats();
 
-                var cell = map.Cells[player.X, player.Y];                
+                var cell = map.Cells[player.X, player.Y];
                 if (cell.Monster?.Health <= 0)
                 {
                     cell.Monster = null;
@@ -86,7 +86,12 @@ namespace Donjon
                 {
                     Console.WriteLine("You defeated the " + cell.Monster.Name);
                 }
+                else {
+                    Console.WriteLine("The " + cell.Monster.Name + " attacks you");
+                    cell.Monster.Fight(player);
+                }
             }
+            System.Threading.Thread.Sleep(3000);
         }
 
         private static ConsoleKey GetKey()
@@ -123,15 +128,32 @@ namespace Donjon
             var random = new Random();
             foreach (var cell in map.Cells)
             {
-                if (random.Next(100) < 20)
-                    if (random.Next(2) == 0)
+                var chance = random.Next(100);
+                if (chance < 20)
+                {
+                    // monster
+                    var whichMonster = random.Next(3);
+
+                    switch (whichMonster)
                     {
-                        cell.Monster = new Goblin(); // polymorfism, regel 1
+                        case 0:
+                            cell.Monster = new Goblin();
+                            break;
+                        case 1:
+                            cell.Monster = new Orc();
+                            break;
+                        case 2:
+                            cell.Monster = new Troll();
+                            break;
+                    }                  
+                }
+                else if (chance < 30)
+                {
+                    // item
+                    if (random.Next(2) == 0) {
+                        cell.Item = new Sword();
                     }
-                    else
-                    {
-                        cell.Monster = new Orc();
-                    }
+                }
             }
         }
 
@@ -153,7 +175,11 @@ namespace Donjon
                     }
                     else if (cell.Monster != null)
                     {
-                        Console.Write(cell.Monster.MapSymbol);  // polymorfism, regel 2, typ
+                        Console.Write(cell.Monster.MapSymbol); 
+                    }
+                    else if (cell.Item != null)
+                    {
+                        Console.Write(cell.Item.MapSymbol); 
                     }
                     else {
                         Console.Write(".");

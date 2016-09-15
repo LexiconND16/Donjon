@@ -25,7 +25,6 @@ namespace Donjon
 
         public void Fight(Monster monster) {
             monster.Health -= 20;
-            this.Health -= 20;
         }
     }
 }
