@@ -12,6 +12,25 @@ namespace Donjon
         public int Height { get; }
 
         public readonly Cell[,] Cells;
+        public List<Monster> Monsters { get; } = new List<Monster>();
+
+        public List<Monster> LivingMonsters
+        {
+            get { return Monsters.Where(m => m.Health > 0).ToList(); }
+        }
+
+        public List<Monster> DeadMonsters
+            => Monsters.Where(m => m.Health <= 0).ToList();
+
+        public List<Troll> Trolls {
+            get {
+                return LivingMonsters
+                  .Where(m => m is Troll)
+                  .Select(m => m as Troll)
+                  .ToList();
+            }
+        } 
+
 
         public Map(int width, int height)
         {

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 
 namespace Donjon
@@ -27,6 +28,16 @@ namespace Donjon
                 // get input from player and process it
                 ConsoleKey key = GetKey();
                 quit = Process(quit, key);
+
+                // regenerate
+                var regens = map.LivingMonsters
+                    .Where(m => m is IRegenerating)
+                    .Select(m => m as IRegenerating);
+
+                foreach (var r in regens)
+                {
+                    r.Regenerate();
+                }
 
                 // print map & other info
                 Console.Clear();
@@ -131,6 +142,12 @@ namespace Donjon
             Console.WriteLine("HP: " + player.Health);
             Console.WriteLine("Weapon: " + (player.HasSword ? "sword" : "no"));
 
+            Console.WriteLine("In this map:");
+            Console.WriteLine("  monsters: " + map.Monsters.Count);
+            Console.WriteLine("  living monsters: " + map.LivingMonsters.Count);
+            Console.WriteLine("  dead monsters: " + map.DeadMonsters.Count);
+            Console.WriteLine("  trolls: " + map.Trolls.Count);
+
             Console.WriteLine("In this room you see:");
             var cell = map.Cells[player.X, player.Y];
             if (cell.Monster == null)
@@ -170,18 +187,22 @@ namespace Donjon
                     // monster
                     var whichMonster = random.Next(3);
 
+                    Monster monster = null;
                     switch (whichMonster)
                     {
                         case 0:
-                            cell.Monster = new Goblin();
+                            // polymorfismens första regel
+                            monster = new Goblin();
                             break;
                         case 1:
-                            cell.Monster = new Orc();
+                            monster = new Orc();
                             break;
                         case 2:
-                            cell.Monster = new Troll();
+                            monster = new Troll();
                             break;
                     }
+                    cell.Monster = monster;
+                    if (monster != null) map.Monsters.Add(monster);
                 }
                 else if (chance < 30)
                 {

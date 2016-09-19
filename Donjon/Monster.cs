@@ -6,19 +6,31 @@ using System.Threading.Tasks;
 
 namespace Donjon
 {
+    interface IRegenerating {
+        void Regenerate();
+    }
+
     class Monster
     {
-        public int Health { get; set; }
+        private int health;
+        public int Health
+        {
+            get { return health; }
+            set { health = Math.Min(value, MaxHealth); }
+        }
+
         public string MapSymbol { get; }
         public string Name { get; }
 
+        protected int MaxHealth;
         protected int Damage = 20;
 
-        public Monster(string mapSymbol, string name, int health)
+        public Monster(string mapSymbol, string name, int maxHealth)
         {
             MapSymbol = mapSymbol;
             Name = name;
-            Health = health;
+            MaxHealth = maxHealth;
+            Health = maxHealth;
         }
 
         public virtual void Fight(Player player)
@@ -34,17 +46,18 @@ namespace Donjon
 
     class Orc : Monster
     {
-        public Orc() : base("O", "orc", 40) {
+        public Orc() : base("O", "orc", 40)
+        {
             Damage = 40;
         }
     }
-    class Troll : Monster {
+    class Troll : Monster, IRegenerating
+    {
         public Troll() : base("T", "troll", 50) { }
-
-        public override void Fight(Player player)
+        
+        public void Regenerate()
         {
-            base.Fight(player);
-            Health += 10;
+            Health += 2;
         }
     }
 }
